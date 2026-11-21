@@ -53,7 +53,7 @@ export function ResultsView({
         aria-label="About this activity"
       >
         <Info className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
-        <p className="text-sm leading-relaxed">
+        <p className="text-lg leading-relaxed">
           <strong>Just for fun — and for conversation.</strong> This is a lighthearted conversation starter, not a
           validated psychological or personality assessment. Your shapes don&apos;t define you; they simply give your
           group a playful way to talk about how God has wired each of us differently.
@@ -100,7 +100,7 @@ export function ResultsView({
           </div>
           <p className="mt-4 leading-relaxed">{featured.description}</p>
           <ReflectionDetails kind={duplicateKind} />
-          <p className="mt-4 text-sm text-muted-foreground">
+          <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
             Doubling a symbol is a playful hint at a strength you may lean on — but you used all four, and so does every
             good team.
           </p>
@@ -125,7 +125,7 @@ export function ResultsView({
                     </p>
                   </div>
                 </div>
-                <p className="mt-3 text-sm leading-relaxed">{r.description}</p>
+                <p className="mt-3 text-lg leading-relaxed">{r.description}</p>
                 <ReflectionDetails kind={kind} compact />
               </article>
             );
@@ -137,7 +137,7 @@ export function ResultsView({
         <h2 id="talk-heading" className="text-2xl font-semibold">
           Talk it over together
         </h2>
-        <ol className="mt-4 space-y-3">
+        <ol className="mt-4 space-y-3 text-lg leading-relaxed">
           {GROUP_PROMPTS.map((q, i) => (
             <li key={q} className="flex gap-3">
               <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-foreground font-semibold text-primary">
@@ -153,9 +153,9 @@ export function ResultsView({
         </blockquote>
       </section>
 
-      <details className="rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground">
+      <details className="rounded-xl border border-border/60 bg-card px-4 py-3 text-muted-foreground">
         <summary className="cursor-pointer font-medium text-foreground">About this exercise &amp; sources</summary>
-        <div className="mt-3 space-y-3 leading-relaxed">
+        <div className="mt-3 space-y-3 text-lg leading-relaxed">
           <p>
             Leadwithshape is an adapted, lighthearted shape-picture discussion activity. Its biblical leadership
             reflections, Scripture connections, and group questions were developed for this version, inspired in part
@@ -189,7 +189,7 @@ export function ResultsView({
 function ReflectionDetails({ kind, compact = false }: { kind: SymbolKind; compact?: boolean }) {
   const r = REFLECTIONS[kind];
   return (
-    <div className={compact ? "mt-3 space-y-2 text-sm" : "mt-4 space-y-3"}>
+    <div className={compact ? "mt-3 space-y-3 text-lg leading-relaxed" : "mt-4 space-y-3 text-lg leading-relaxed"}>
       <ul className="flex flex-wrap gap-1.5" aria-label="Possible strengths">
         {r.strengths.map((s) => (
           <li key={s} className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground">
@@ -197,13 +197,13 @@ function ReflectionDetails({ kind, compact = false }: { kind: SymbolKind; compac
           </li>
         ))}
       </ul>
-      <p className={compact ? "text-muted-foreground" : "text-sm text-muted-foreground"}>
+      <p className="text-muted-foreground">
         <strong className="text-foreground">Watch for:</strong> {r.watchFor}
       </p>
       <p className={compact ? "font-display italic" : "font-display text-lg italic"}>
-        “{r.verse.text}” <span className="font-sans text-xs not-italic text-muted-foreground">— {r.verse.reference}</span>
+        “{r.verse.text}” <span className="font-sans text-sm not-italic text-muted-foreground">— {r.verse.reference}</span>
       </p>
-      <p className={compact ? "" : "text-sm"}>
+      <p className="text-lg leading-relaxed">
         <strong>Reflect:</strong> {r.question}
       </p>
     </div>
