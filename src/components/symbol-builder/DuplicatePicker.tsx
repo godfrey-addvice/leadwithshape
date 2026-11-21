@@ -37,7 +37,7 @@ export function DuplicatePicker({
           </span>
         )}
       </div>
-      <p id="duplicate-help" className="mb-3 text-sm text-muted-foreground">
+      <p id="duplicate-help" className="mb-3 text-lg leading-relaxed text-muted-foreground">
         Add a second copy of exactly <strong className="text-foreground">one</strong> symbol — whichever feels most
         like you. You can switch your choice anytime.
       </p>
@@ -59,7 +59,7 @@ export function DuplicatePicker({
           );
         })}
       </div>
-      <p className="mt-3 text-sm" aria-live="polite">
+      <p className="mt-3 text-lg leading-relaxed" aria-live="polite">
         {duplicateKind ? (
           <>
             You doubled the <strong>{SYMBOL_LABELS[duplicateKind].toLowerCase()}</strong> — five pieces in all.
