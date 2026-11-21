@@ -191,7 +191,7 @@ export function SymbolBuilder() {
               describedBy="canvas-help"
             />
             </div>
-            <div aria-label="Swipe here to scroll the page" className="absolute inset-y-0 right-0 z-10 flex w-6 touch-pan-y items-center justify-center border-l bg-card/80 lg:hidden" style={{ touchAction: "pan-y" }}><span aria-hidden="true" className="text-xs text-muted-foreground" style={{ writingMode: "vertical-rl" }}>↕ Scroll</span></div>
+            <div aria-label="Swipe here to scroll the page" className="absolute inset-y-0 right-0 z-10 flex w-6 touch-pan-y items-center justify-center border-l bg-card/80 lg:hidden" style={{ touchAction: "pan-y" }}><span aria-hidden="true" className="text-xs text-muted-foreground" style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}>↑ Scroll ↓</span></div>
           </div>
           <p id="canvas-help" className="mt-2 flex items-start gap-2 text-sm text-muted-foreground">
             <Hand className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
