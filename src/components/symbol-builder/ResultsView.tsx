@@ -153,6 +153,27 @@ export function ResultsView({
         </blockquote>
       </section>
 
+      <details className="rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground">
+        <summary className="cursor-pointer font-medium text-foreground">About this exercise &amp; sources</summary>
+        <div className="mt-3 space-y-3 leading-relaxed">
+          <p>
+            Leadwithshape is an adapted, lighthearted shape-picture discussion activity. Its biblical leadership
+            reflections, Scripture connections, and group questions were developed for this version, inspired in part
+            by a biblical leadership course. It is not a validated personality assessment.
+          </p>
+          <p>
+            The four-shape drawing prompt (triangle, square, circle, and squiggle, with one repeated) also appears in
+            <a className="ml-1 underline underline-offset-2 hover:text-foreground" href="https://discover.hubpages.com/education/Simple-Symbol-Personality-Test" target="_blank" rel="noopener noreferrer">
+              “Simple Symbol Personality Test” by drbj and sherry
+            </a>. Earlier shape-based communication work includes Susan Dellinger&apos;s
+            <a className="ml-1 underline underline-offset-2 hover:text-foreground" href="https://psychogeometrics.com/about/the-science/" target="_blank" rel="noopener noreferrer">
+              PsychoGeometrics
+            </a>, which uses five shapes. These references provide background, not a verified claim about who first created this particular drawing exercise.
+          </p>
+          <p>Leadwithshape is an independent adaptation and is not affiliated with or endorsed by these sources.</p>
+        </div>
+      </details>
+
       <div className="flex flex-col gap-3 pb-4 sm:flex-row">
         <Button type="button" variant="outline" size="lg" onClick={onEdit}>
           <ArrowLeft /> Keep editing my picture
