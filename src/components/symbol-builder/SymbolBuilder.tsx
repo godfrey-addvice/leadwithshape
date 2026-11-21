@@ -163,7 +163,7 @@ export function SymbolBuilder() {
       <header className="mb-5 max-w-2xl sm:mb-7">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cta">Biblical Leadership · Reflection</p>
         <h1 className="mt-1 text-3xl font-semibold leading-tight sm:text-5xl">Symbol Picture Builder</h1>
-        <p className="mt-2 text-base text-muted-foreground sm:text-lg">
+        <p className="mt-2 text-lg leading-relaxed text-muted-foreground">
           Make a picture from a{" "}
           {SYMBOL_KINDS.map((k, i) => (
             <span key={k} className="whitespace-nowrap">
@@ -193,7 +193,7 @@ export function SymbolBuilder() {
             </div>
             <div aria-label="Swipe here to scroll the page" className="absolute inset-y-0 right-0 z-10 flex w-6 touch-pan-y flex-col items-center justify-center gap-2 border-l border-cta bg-cta text-cta-foreground lg:hidden" style={{ touchAction: "pan-y" }}><span aria-hidden="true" className="text-base leading-none">↑</span><span aria-hidden="true" className="text-xs font-bold tracking-wider" style={{ writingMode: "vertical-rl" }}>SCROLL</span><span aria-hidden="true" className="text-base leading-none">↓</span></div>
           </div>
-          <p id="canvas-help" className="mt-2 flex items-start gap-2 text-sm text-muted-foreground">
+          <p id="canvas-help" className="mt-2 flex items-start gap-2 text-lg leading-relaxed text-muted-foreground">
             <Hand className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
             <span>
               Drag a shape with one finger. Use its handles (or pinch with two fingers) to turn and resize.{" "}
@@ -268,7 +268,7 @@ export function SymbolBuilder() {
         {announcement}
       </p>
 
-      <footer className="mt-10 border-t pt-5 text-sm text-muted-foreground">
+      <footer className="mt-10 border-t pt-5 text-lg leading-relaxed text-muted-foreground">
         A lighthearted reflection activity for leadership groups — a conversation starter, not a psychological
         assessment. No sign-in; your picture stays on this device.
       </footer>
