@@ -148,8 +148,8 @@ export function ResultsView({
           ))}
         </ol>
         <blockquote className="mt-6 border-l-2 border-primary-foreground/40 pl-4 font-display text-lg italic">
-          “For as the body is one, and hath many members… so also is Christ.”
-          <cite className="mt-1 block font-sans text-sm not-italic opacity-80">1 Corinthians 12:12</cite>
+          “For just as the body is one and has many parts… so also is Christ.”
+          <cite className="mt-1 block font-sans text-sm not-italic opacity-80">1 Corinthians 12:12 (CSB, excerpt)</cite>
         </blockquote>
       </section>
 
@@ -201,7 +201,7 @@ function ReflectionDetails({ kind, compact = false }: { kind: SymbolKind; compac
         <strong className="text-foreground">Watch for:</strong> {r.watchFor}
       </p>
       <p className={compact ? "font-display italic" : "font-display text-lg italic"}>
-        “{r.verse.text}” <span className="font-sans text-sm not-italic text-muted-foreground">— {r.verse.reference}</span>
+        “{r.verse.text}” <span className="font-sans text-sm not-italic text-muted-foreground">— {r.verse.reference} (CSB, excerpt)</span>
       </p>
       <p className="text-lg leading-relaxed">
         <strong>Reflect:</strong> {r.question}
