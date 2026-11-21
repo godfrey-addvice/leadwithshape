@@ -16,7 +16,7 @@ export function Checklist({ status }: { status: PictureStatus }) {
       </h2>
       <ul className="space-y-2">
         {items.map((item) => (
-          <li key={item.label} className="flex items-start gap-2.5 text-sm">
+          <li key={item.label} className="flex items-start gap-2.5 text-lg leading-relaxed">
             {item.done ? (
               <CircleCheck className="mt-0.5 size-5 shrink-0 text-success" aria-hidden="true" />
             ) : (
