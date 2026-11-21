@@ -1,10 +1,9 @@
-import { ArrowLeft, Download, ExternalLink, Info, RefreshCcw, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, Info, RefreshCcw, Sparkles } from "lucide-react";
 import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { renderSvgToPng, saveImage } from "@/lib/export-image";
 import { GROUP_PROMPTS, REFLECTIONS } from "@/lib/reflections";
-import { COACHING_PORTAL_URL } from "@/lib/site-config";
 import { SYMBOL_KINDS, SYMBOL_LABELS, type Piece, type SymbolKind } from "@/lib/symbols";
 
 import { PictureView } from "./PictureView";
@@ -152,26 +151,6 @@ export function ResultsView({
           “For as the body is one, and hath many members… so also is Christ.”
           <cite className="mt-1 block font-sans text-sm not-italic opacity-80">1 Corinthians 12:12</cite>
         </blockquote>
-      </section>
-
-      <section aria-labelledby="portal-heading" className="rounded-2xl border bg-card p-5 shadow-soft">
-        <h2 id="portal-heading" className="text-xl font-semibold">
-          Coaching Reflection Portal
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Keep reflecting on your leadership with guided coaching questions.
-        </p>
-        {COACHING_PORTAL_URL ? (
-          <Button asChild variant="default" size="lg" className="mt-3">
-            <a href={COACHING_PORTAL_URL} target="_blank" rel="noopener noreferrer">
-              Open the portal <ExternalLink />
-            </a>
-          </Button>
-        ) : (
-          <p className="mt-3 inline-block rounded-full bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
-            Coming soon
-          </p>
-        )}
       </section>
 
       <div className="flex flex-col gap-3 pb-4 sm:flex-row">
