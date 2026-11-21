@@ -18,7 +18,7 @@ export const REFLECTIONS: Record<SymbolKind, Reflection> = {
       "Triangles have a point — and so do triangle people. You may naturally see where things need to go and feel energized rallying others toward a goal.",
     strengths: ["Casts vision", "Makes decisions", "Brings momentum"],
     watchFor: "Remember to bring people along, not just get there first.",
-    verse: { reference: "Nehemiah 2:18", text: "Let us rise up and build." },
+    verse: { reference: "Nehemiah 2:18", text: "Let’s start rebuilding." },
     question: "When have you stepped up to point the way for others?",
   },
   square: {
@@ -28,7 +28,7 @@ export const REFLECTIONS: Record<SymbolKind, Reflection> = {
       "Squares are steady and dependable. You may love a clear plan, a tidy process and the satisfaction of seeing the details done well.",
     strengths: ["Plans ahead", "Keeps commitments", "Creates order"],
     watchFor: "Leave room for surprises — not everything fits in a box.",
-    verse: { reference: "1 Corinthians 14:40", text: "Let all things be done decently and in order." },
+    verse: { reference: "1 Corinthians 14:40", text: "But everything is to be done decently and in order." },
     question: "What structure or habit have you built that helps others thrive?",
   },
   circle: {
@@ -40,7 +40,7 @@ export const REFLECTIONS: Record<SymbolKind, Reflection> = {
     watchFor: "Peacemaking isn't the same as avoiding hard conversations.",
     verse: {
       reference: "Matthew 5:9",
-      text: "Blessed are the peacemakers: for they shall be called the children of God.",
+      text: "Blessed are the peacemakers, for they will be called sons of God.",
     },
     question: "How do you help people feel they belong?",
   },
@@ -53,7 +53,7 @@ export const REFLECTIONS: Record<SymbolKind, Reflection> = {
     watchFor: "Great ideas still need follow-through — partner with a square!",
     verse: {
       reference: "Isaiah 43:19",
-      text: "Behold, I will do a new thing; now it shall spring forth.",
+      text: "Look, I am about to do something new; even now it is coming.",
     },
     question: "Where might God be inviting you to try something new?",
   },
