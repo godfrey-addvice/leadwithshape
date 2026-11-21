@@ -177,7 +177,7 @@ export function SymbolBuilder() {
       </header>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start">
-        <div className="order-2 lg:order-1 lg:sticky lg:top-6">
+        <div className="order-2 lg:order-1 lg:row-span-2 lg:row-start-1 lg:sticky lg:top-6">
           <div className="relative aspect-square w-full overflow-hidden rounded-3xl border bg-canvas shadow-canvas pr-6 lg:pr-0">
             <div className="relative h-full w-full overflow-hidden rounded-l-3xl lg:rounded-3xl">
             <PictureCanvas
