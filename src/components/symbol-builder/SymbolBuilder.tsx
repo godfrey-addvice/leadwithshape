@@ -177,8 +177,9 @@ export function SymbolBuilder() {
       </header>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start">
-        <div className="lg:sticky lg:top-6">
-          <div className="relative aspect-square w-full overflow-hidden rounded-3xl border bg-canvas shadow-canvas">
+        <div className="order-2 lg:order-1 lg:sticky lg:top-6">
+          <div className="relative aspect-square w-full overflow-hidden rounded-3xl border bg-canvas shadow-canvas pr-6 lg:pr-0">
+            <div className="relative h-full w-full overflow-hidden rounded-l-3xl lg:rounded-3xl">
             <PictureCanvas
               pieces={pieces}
               selectedId={selectedId}
@@ -189,6 +190,8 @@ export function SymbolBuilder() {
               onCommit={commit}
               describedBy="canvas-help"
             />
+            </div>
+            <div aria-label="Swipe here to scroll the page" className="absolute inset-y-0 right-0 z-10 flex w-6 touch-pan-y items-center justify-center border-l bg-card/80 lg:hidden" style={{ touchAction: "pan-y" }}><span aria-hidden="true" className="text-xs text-muted-foreground" style={{ writingMode: "vertical-rl" }}>↕ Scroll</span></div>
           </div>
           <p id="canvas-help" className="mt-2 flex items-start gap-2 text-sm text-muted-foreground">
             <Hand className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
@@ -199,13 +202,12 @@ export function SymbolBuilder() {
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="order-1 lg:order-2 lg:col-start-2 lg:row-start-1">
+          <DuplicatePicker duplicateKind={status.duplicateKind} onChoose={handleChooseDuplicate} highlight={!!finishMessage && !status.duplicateKind} />
+        </div>
+
+        <div className="order-3 space-y-4 lg:col-start-2 lg:row-start-2">
           <ToolPanel selected={selected} onAction={handleTool} />
-          <DuplicatePicker
-            duplicateKind={status.duplicateKind}
-            onChoose={handleChooseDuplicate}
-            highlight={!!finishMessage && !status.duplicateKind}
-          />
           <Checklist status={status} />
 
           {/* Action bar: pinned to the bottom on phones, inline on large screens. */}
