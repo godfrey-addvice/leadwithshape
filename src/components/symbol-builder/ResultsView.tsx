@@ -1,4 +1,4 @@
-import { ArrowLeft, Download, FileDown, Info, RefreshCcw, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, FileDown, Info, RefreshCcw, Share2, Sparkles } from "lucide-react";
 import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,28 @@ export function ResultsView({
   const svgRef = useRef<SVGSVGElement>(null);
   const [saveState, setSaveState] = useState<"idle" | "working" | "done" | "error">("idle");
   const [pdfState, setPdfState] = useState<"idle" | "working" | "done" | "error">("idle");
+  const [shareFile, setShareFile] = useState<File | null>(null);
+  const [inviteFallback, setInviteFallback] = useState(false);
+  const [inviteStatus, setInviteStatus] = useState("");
+  const inviteUrl = "https://pastorg.ca/shape";
+  const inviteText = "Try Leadwithshape, an interactive biblical leadership reflection exercise.";
+  const handleInvite = async () => {
+    setInviteStatus("");
+    if (navigator.share) {
+      try { await navigator.share({ title: "Leadwithshape", text: inviteText, url: inviteUrl }); return; }
+      catch (err) { if (err instanceof Error && err.name === "AbortError") return; }
+    }
+    setInviteFallback(true);
+  };
+  const copyInvite = async () => {
+    try { await navigator.clipboard.writeText(inviteText + " " + inviteUrl); setInviteStatus("Invitation copied."); }
+    catch { setInviteStatus("Select and copy the invitation below."); }
+  };
+  const shareReport = async (file: File) => {
+    if (!navigator.canShare?.({ files: [file] })) { setShareFile(file); return; }
+    try { await navigator.share({ files: [file], title: "My Leadwithshape reflection" }); setShareFile(null); }
+    catch (err) { if (!(err instanceof Error && err.name === "AbortError")) setShareFile(file); }
+  };
   const others = SYMBOL_KINDS.filter((k) => k !== duplicateKind);
   const featured = REFLECTIONS[duplicateKind];
 
@@ -38,7 +60,7 @@ export function ResultsView({
     }
   };
 
-  const handlePdf = async () => {
+  const handlePdf = async (mode: "download" | "share" = "download") => {
     if (!svgRef.current) return;
     setPdfState("working");
     try {
@@ -177,12 +199,12 @@ export function ResultsView({
       }
       const blob = pdf.output("blob");
       const file = new File([blob], "my-leadwithshape-reflection.pdf", { type: "application/pdf" });
-      let shared = false;
-      if (window.matchMedia("(pointer: coarse)").matches && navigator.canShare?.({ files: [file] })) {
-        try { await navigator.share({ files: [file], title: "My Leadwithshape reflection" }); shared = true; }
-        catch (err) { if (err instanceof Error && err.name === "AbortError") { setPdfState("idle"); return; } }
+      if (mode === "share") {
+        setShareFile(file);
+        if (navigator.canShare?.({ files: [file] }) && navigator.userActivation?.isActive) await shareReport(file);
+      } else {
+        pdf.save(file.name);
       }
-      if (!shared) pdf.save(file.name);
       setPdfState("done");
     } catch {
       setPdfState("error");
@@ -225,9 +247,19 @@ export function ResultsView({
             <Button type="button" variant="outline" size="lg" onClick={handleSave} disabled={saveState === "working"}>
               <Download /> {saveState === "working" ? "Preparing…" : "Save picture"}
             </Button>
-            <Button type="button" variant="default" size="lg" onClick={handlePdf} disabled={pdfState === "working"}>
+            <Button type="button" variant="default" size="lg" onClick={() => void handlePdf()} disabled={pdfState === "working"}>
               <FileDown /> {pdfState === "working" ? "Preparing PDF…" : "Download PDF Report"}
             </Button>
+            <Button type="button" variant="outline" size="lg" onClick={() => void handlePdf("share")} disabled={pdfState === "working"}><Share2 /> Share My Report</Button>
+            {shareFile && (
+              <div className="w-full space-y-2 rounded-xl border p-3">
+                <p className="text-base">Your report is ready to share.</p>
+                {navigator.canShare?.({ files: [shareFile] }) && <Button type="button" variant="outline" onClick={() => void shareReport(shareFile)}><Share2 /> Open sharing menu</Button>}
+                <p className="text-base text-muted-foreground">You can also download the PDF and attach it to a message or email.</p>
+                <Button type="button" variant="outline" onClick={() => void handlePdf() }><FileDown /> Download PDF Report</Button>
+                <Button type="button" variant="ghost" onClick={() => setShareFile(null)}>Close</Button>
+              </div>
+            )}
             <p className="w-full text-base text-muted-foreground" aria-live="polite">
               {pdfState === "done" && "Your PDF is ready."}
               {pdfState === "error" && "Could not create the PDF. Please try again."}
@@ -313,6 +345,20 @@ export function ResultsView({
         </blockquote>
       </section>
 
+      <section className="space-y-3 rounded-2xl border bg-card p-5">
+        <h2 className="text-xl font-semibold">Invite others to try Leadwithshape</h2>
+        <p className="text-lg">Share the exercise with friends, colleagues or your ministry team.</p>
+        <Button type="button" variant="outline" size="lg" onClick={() => void handleInvite()}><Share2 /> Invite Others</Button>
+        {inviteFallback && <div className="space-y-3">
+          <p className="select-all break-words text-base">{inviteText} {inviteUrl}</p>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" onClick={() => void copyInvite()}>Copy invitation</Button>
+            <a className="inline-flex items-center underline underline-offset-4" href={"mailto:?subject=" + encodeURIComponent("Try Leadwithshape") + "&body=" + encodeURIComponent(inviteText + "\n" + inviteUrl)}>Open email</a>
+          </div>
+          <p aria-live="polite" className="text-base">{inviteStatus}</p>
+        </div>}
+      </section>
+
       <details className="rounded-xl border border-border/60 bg-card px-4 py-3 text-muted-foreground">
         <summary className="cursor-pointer font-medium text-foreground">About this exercise &amp; sources</summary>
         <div className="mt-3 space-y-3 text-lg leading-relaxed">
@@ -335,7 +381,7 @@ export function ResultsView({
       </details>
 
       <div className="flex flex-col gap-3 pb-4 sm:flex-row">
-        <Button type="button" size="lg" onClick={handlePdf} disabled={pdfState === "working"}><FileDown /> {pdfState === "working" ? "Preparing PDF…" : "Download PDF Report"}</Button>
+        <Button type="button" size="lg" onClick={() => void handlePdf()} disabled={pdfState === "working"}><FileDown /> {pdfState === "working" ? "Preparing PDF…" : "Download PDF Report"}</Button>
         <Button type="button" variant="outline" size="lg" onClick={onEdit}>
           <ArrowLeft /> Keep editing my picture
         </Button>
