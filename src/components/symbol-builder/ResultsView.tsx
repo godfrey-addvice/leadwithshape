@@ -161,7 +161,7 @@ export function ResultsView({
               <Download /> {saveState === "working" ? "Preparing…" : "Save picture"}
             </Button>
             <Button type="button" variant="default" size="lg" onClick={handlePdf} disabled={pdfState === "working"}>
-              <FileDown /> {pdfState === "working" ? "Preparing PDF…" : "Download PDF"}
+              <FileDown /> {pdfState === "working" ? "Preparing PDF…" : "Download PDF Report"}
             </Button>
             <p className="w-full text-base text-muted-foreground" aria-live="polite">
               {pdfState === "done" && "Your PDF is ready."}
@@ -270,7 +270,7 @@ export function ResultsView({
       </details>
 
       <div className="flex flex-col gap-3 pb-4 sm:flex-row">
-        <Button type="button" size="lg" onClick={handlePdf} disabled={pdfState === "working"}><FileDown /> {pdfState === "working" ? "Preparing PDF…" : "Download PDF"}</Button>
+        <Button type="button" size="lg" onClick={handlePdf} disabled={pdfState === "working"}><FileDown /> {pdfState === "working" ? "Preparing PDF…" : "Download PDF Report"}</Button>
         <Button type="button" variant="outline" size="lg" onClick={onEdit}>
           <ArrowLeft /> Keep editing my picture
         </Button>
