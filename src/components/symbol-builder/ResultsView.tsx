@@ -1,4 +1,4 @@
-import { ArrowLeft, Download, Info, RefreshCcw, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, FileDown, Info, RefreshCcw, Sparkles } from "lucide-react";
 import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ export function ResultsView({
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [saveState, setSaveState] = useState<"idle" | "working" | "done" | "error">("idle");
+  const [pdfState, setPdfState] = useState<"idle" | "working" | "done" | "error">("idle");
   const others = SYMBOL_KINDS.filter((k) => k !== duplicateKind);
   const featured = REFLECTIONS[duplicateKind];
 
@@ -34,6 +35,93 @@ export function ResultsView({
       setSaveState(result === "cancelled" ? "idle" : "done");
     } catch {
       setSaveState("error");
+    }
+  };
+
+  const handlePdf = async () => {
+    if (!svgRef.current) return;
+    setPdfState("working");
+    try {
+      const { jsPDF } = await import("jspdf");
+      const picture = await renderSvgToPng(svgRef.current);
+      const pdf = new jsPDF({ unit: "mm", format: "letter" });
+      const width = pdf.internal.pageSize.getWidth();
+      const height = pdf.internal.pageSize.getHeight();
+      const margin = 18;
+      let y = 20;
+      const clean = (s: string) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/…/g, "...").replace(/[—–]/g, "-");
+      const heading = (s: string, size = 18) => {
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(size);
+        pdf.setTextColor(25, 65, 85);
+        pdf.text(clean(s), margin, y);
+        y += size * 0.45 + 3;
+      };
+      const paragraph = (s: string, size = 12) => {
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(size);
+        pdf.setTextColor(35, 40, 45);
+        const lines = pdf.splitTextToSize(clean(s), width - margin * 2) as string[];
+        for (const line of lines) {
+          if (y > height - 22) { pdf.addPage(); y = 20; }
+          pdf.text(line, margin, y);
+          y += size * 0.45;
+        }
+        y += 3;
+      };
+      const nextPage = () => { pdf.addPage(); y = 20; };
+      heading("Leadwithshape", 26);
+      paragraph("My symbol picture | Biblical leadership reflection");
+      pdf.addImage(new Uint8Array(await picture.arrayBuffer()), "PNG", (width - 85) / 2, y, 85, 85);
+      y += 94;
+      heading("You doubled the " + SYMBOL_LABELS[duplicateKind].toLowerCase(), 16);
+      heading(featured.role, 21);
+      paragraph(featured.tagline);
+      paragraph(featured.description);
+      paragraph("Possible strengths: " + featured.strengths.join(" | "));
+      paragraph("Watch for: " + featured.watchFor);
+      paragraph('"' + featured.verse.text + '" - ' + featured.verse.reference + " (CSB, excerpt)");
+      paragraph("Reflect: " + featured.question);
+      nextPage();
+      heading("The rest of your picture", 22);
+      for (const kind of others) {
+        const r = REFLECTIONS[kind];
+        if (y > height - 82) nextPage();
+        heading(SYMBOL_LABELS[kind] + " | " + r.role, 16);
+        paragraph(r.description);
+        paragraph("Possible strengths: " + r.strengths.join(" | "));
+        paragraph("Watch for: " + r.watchFor);
+        paragraph('"' + r.verse.text + '" - ' + r.verse.reference + " (CSB, excerpt)");
+        paragraph("Reflect: " + r.question);
+        y += 3;
+      }
+      nextPage();
+      heading("Talk it over together", 22);
+      GROUP_PROMPTS.forEach((q, i) => { paragraph((i + 1) + ". " + q, 13); y += 7; });
+      paragraph('"For just as the body is one and has many parts... so also is Christ." - 1 Corinthians 12:12 (CSB, excerpt)');
+      y += 8;
+      heading("About this activity", 15);
+      paragraph("A lighthearted conversation starter, not a validated psychological or personality assessment. Your shapes do not define you.");
+      paragraph("Visit pastorg.ca/shape for the activity and background sources.");
+      for (let i = 1; i <= pdf.getNumberOfPages(); i++) {
+        pdf.setPage(i);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(9);
+        pdf.setTextColor(100);
+        pdf.text("Leadwithshape | pastorg.ca/shape", margin, height - 10);
+        pdf.text(String(i) + " / " + pdf.getNumberOfPages(), width - margin, height - 10, { align: "right" });
+      }
+      const blob = pdf.output("blob");
+      const file = new File([blob], "my-leadwithshape-reflection.pdf", { type: "application/pdf" });
+      let shared = false;
+      if (window.matchMedia("(pointer: coarse)").matches && navigator.canShare?.({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: "My Leadwithshape reflection" }); shared = true; }
+        catch (err) { if (err instanceof Error && err.name === "AbortError") { setPdfState("idle"); return; } }
+      }
+      if (!shared) pdf.save(file.name);
+      setPdfState("done");
+    } catch {
+      setPdfState("error");
     }
   };
 
@@ -72,6 +160,13 @@ export function ResultsView({
             <Button type="button" variant="outline" size="lg" onClick={handleSave} disabled={saveState === "working"}>
               <Download /> {saveState === "working" ? "Preparing…" : "Save picture"}
             </Button>
+            <Button type="button" variant="default" size="lg" onClick={handlePdf} disabled={pdfState === "working"}>
+              <FileDown /> {pdfState === "working" ? "Preparing PDF…" : "Download PDF"}
+            </Button>
+            <p className="w-full text-base text-muted-foreground" aria-live="polite">
+              {pdfState === "done" && "Your PDF is ready."}
+              {pdfState === "error" && "Could not create the PDF. Please try again."}
+            </p>
             <p className="text-sm text-muted-foreground" aria-live="polite">
               {saveState === "done" && "Saved! Share it with your group."}
               {saveState === "error" && "Sorry, saving didn't work on this device — try a screenshot instead."}
@@ -175,6 +270,7 @@ export function ResultsView({
       </details>
 
       <div className="flex flex-col gap-3 pb-4 sm:flex-row">
+        <Button type="button" size="lg" onClick={handlePdf} disabled={pdfState === "working"}><FileDown /> {pdfState === "working" ? "Preparing PDF…" : "Download PDF"}</Button>
         <Button type="button" variant="outline" size="lg" onClick={onEdit}>
           <ArrowLeft /> Keep editing my picture
         </Button>
