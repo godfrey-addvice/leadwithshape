@@ -256,7 +256,6 @@ export function ResultsView({
                 <p className="text-base">Your report is ready to share.</p>
                 {navigator.canShare?.({ files: [shareFile] }) && <Button type="button" variant="outline" onClick={() => void shareReport(shareFile)}><Share2 /> Open sharing menu</Button>}
                 <p className="text-base text-muted-foreground">You can also download the PDF and attach it to a message or email.</p>
-                <Button type="button" variant="outline" onClick={() => void handlePdf() }><FileDown /> Download PDF Report</Button>
                 <Button type="button" variant="ghost" onClick={() => setShareFile(null)}>Close</Button>
               </div>
             )}
