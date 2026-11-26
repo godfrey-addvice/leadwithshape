@@ -27,11 +27,11 @@ export function ResultsView({
   const [inviteFallback, setInviteFallback] = useState(false);
   const [inviteStatus, setInviteStatus] = useState("");
   const inviteUrl = "https://pastorg.ca/shape";
-  const inviteText = "Try Leadwithshape, an interactive biblical leadership reflection exercise.";
+  const inviteText = "Try Lead With Shape, an interactive biblical leadership reflection exercise.";
   const handleInvite = async () => {
     setInviteStatus("");
     if (navigator.share) {
-      try { await navigator.share({ title: "Leadwithshape", text: inviteText, url: inviteUrl }); return; }
+      try { await navigator.share({ title: "Lead With Shape", text: inviteText, url: inviteUrl }); return; }
       catch (err) { if (err instanceof Error && err.name === "AbortError") return; }
     }
     setInviteFallback(true);
@@ -42,7 +42,7 @@ export function ResultsView({
   };
   const shareReport = async (file: File) => {
     if (!navigator.canShare?.({ files: [file] })) { setShareFile(file); return; }
-    try { await navigator.share({ files: [file], title: "My Leadwithshape reflection" }); setShareFile(null); }
+    try { await navigator.share({ files: [file], title: "My Lead With Shape reflection" }); setShareFile(null); }
     catch (err) { if (!(err instanceof Error && err.name === "AbortError")) setShareFile(file); }
   };
   const others = SYMBOL_KINDS.filter((k) => k !== duplicateKind);
@@ -125,7 +125,7 @@ export function ResultsView({
       };
       pdf.setFillColor(ink);
       pdf.rect(0, 0, width, 5, "F");
-      heading("Leadwithshape", 28);
+      heading("Lead With Shape", 28);
       paragraph("MY SYMBOL PICTURE  |  BIBLICAL LEADERSHIP REFLECTION", 10, "bold", muted);
       const pictureSize = 65;
       pdf.setDrawColor("#cbd8dc");
@@ -194,11 +194,11 @@ export function ResultsView({
         pdf.setFont("helvetica", "normal");
         pdf.setFontSize(9);
         pdf.setTextColor(muted);
-        pdf.text("Leadwithshape | pastorg.ca/shape", margin, height - 10);
+        pdf.text("Lead With Shape | pastorg.ca/shape", margin, height - 10);
         pdf.text(String(i) + " / " + pdf.getNumberOfPages(), width - margin, height - 10, { align: "right" });
       }
       const blob = pdf.output("blob");
-      const file = new File([blob], "my-leadwithshape-reflection.pdf", { type: "application/pdf" });
+      const file = new File([blob], "my-lead-with-shape-reflection.pdf", { type: "application/pdf" });
       if (mode === "share") {
         setShareFile(file);
         if (navigator.canShare?.({ files: [file] }) && navigator.userActivation?.isActive) await shareReport(file);
@@ -345,14 +345,14 @@ export function ResultsView({
       </section>
 
       <section className="space-y-3 rounded-2xl border bg-card p-5">
-        <h2 className="text-xl font-semibold">Invite others to try Leadwithshape</h2>
+        <h2 className="text-xl font-semibold">Invite others to try Lead With Shape</h2>
         <p className="text-lg">Share the exercise with friends, colleagues or your ministry team.</p>
         <Button type="button" variant="outline" size="lg" onClick={() => void handleInvite()}><Share2 /> Invite Others</Button>
         {inviteFallback && <div className="space-y-3">
           <p className="select-all break-words text-base">{inviteText} {inviteUrl}</p>
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" onClick={() => void copyInvite()}>Copy invitation</Button>
-            <a className="inline-flex items-center underline underline-offset-4" href={"mailto:?subject=" + encodeURIComponent("Try Leadwithshape") + "&body=" + encodeURIComponent(inviteText + "\n" + inviteUrl)}>Open email</a>
+            <a className="inline-flex items-center underline underline-offset-4" href={"mailto:?subject=" + encodeURIComponent("Try Lead With Shape") + "&body=" + encodeURIComponent(inviteText + "\n" + inviteUrl)}>Open email</a>
           </div>
           <p aria-live="polite" className="text-base">{inviteStatus}</p>
         </div>}
@@ -362,7 +362,7 @@ export function ResultsView({
         <summary className="cursor-pointer font-medium text-foreground">About this exercise &amp; sources</summary>
         <div className="mt-3 space-y-3 text-lg leading-relaxed">
           <p>
-            Leadwithshape is an adapted, lighthearted shape-picture discussion activity. Its biblical leadership
+            Lead With Shape is an adapted, lighthearted shape-picture discussion activity. Its biblical leadership
             reflections, Scripture connections, and group questions were developed for this version, inspired in part
             by a biblical leadership course. It is not a validated personality assessment.
           </p>
@@ -375,7 +375,7 @@ export function ResultsView({
               PsychoGeometrics
             </a>, which uses five shapes. These references provide background, not a verified claim about who first created this particular drawing exercise.
           </p>
-          <p>Leadwithshape is an independent adaptation and is not affiliated with or endorsed by these sources.</p>
+          <p>Lead With Shape is an independent adaptation and is not affiliated with or endorsed by these sources.</p>
         </div>
       </details>
 
