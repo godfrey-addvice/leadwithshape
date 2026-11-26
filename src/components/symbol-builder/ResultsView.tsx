@@ -47,67 +47,110 @@ export function ResultsView({
       const pdf = new jsPDF({ unit: "mm", format: "letter" });
       const width = pdf.internal.pageSize.getWidth();
       const height = pdf.internal.pageSize.getHeight();
-      const margin = 18;
+      const margin = 17;
+      const contentWidth = width - margin * 2;
       let y = 20;
       const clean = (s: string) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/…/g, "...").replace(/[—–]/g, "-");
-      const heading = (s: string, size = 18) => {
+      const ink = "#234553";
+      const muted = "#52636b";
+      const heading = (s: string, size = 20, x = margin) => {
         pdf.setFont("helvetica", "bold");
         pdf.setFontSize(size);
-        pdf.setTextColor(25, 65, 85);
-        pdf.text(clean(s), margin, y);
+        pdf.setTextColor(ink);
+        pdf.text(clean(s), x, y);
         y += size * 0.45 + 3;
       };
-      const paragraph = (s: string, size = 12) => {
-        pdf.setFont("helvetica", "normal");
+      const paragraph = (s: string, size = 12, style = "normal", color = "#26343a", x = margin, w = contentWidth) => {
+        pdf.setFont("helvetica", style);
         pdf.setFontSize(size);
-        pdf.setTextColor(35, 40, 45);
-        const lines = pdf.splitTextToSize(clean(s), width - margin * 2) as string[];
+        pdf.setTextColor(color);
+        const lines = pdf.splitTextToSize(clean(s), w) as string[];
         for (const line of lines) {
-          if (y > height - 22) { pdf.addPage(); y = 20; }
-          pdf.text(line, margin, y);
-          y += size * 0.45;
+          pdf.text(line, x, y);
+          y += size * 0.44;
         }
-        y += 3;
+        y += 2;
       };
       const nextPage = () => { pdf.addPage(); y = 20; };
-      heading("Leadwithshape", 26);
-      paragraph("My symbol picture | Biblical leadership reflection");
-      pdf.addImage(new Uint8Array(await picture.arrayBuffer()), "PNG", (width - 85) / 2, y, 85, 85);
-      y += 94;
-      heading("You doubled the " + SYMBOL_LABELS[duplicateKind].toLowerCase(), 16);
-      heading(featured.role, 21);
-      paragraph(featured.tagline);
-      paragraph(featured.description);
-      paragraph("Possible strengths: " + featured.strengths.join(" | "));
-      paragraph("Watch for: " + featured.watchFor);
-      paragraph('"' + featured.verse.text + '" - ' + featured.verse.reference + " (CSB, excerpt)");
-      paragraph("Reflect: " + featured.question);
-      nextPage();
-      heading("The rest of your picture", 22);
-      for (const kind of others) {
+      const glyphs = new Map<SymbolKind, Uint8Array>();
+      for (const kind of SYMBOL_KINDS) {
+        const svg = document.querySelector<SVGSVGElement>('svg[data-report-shape="' + kind + '"]');
+        if (svg) glyphs.set(kind, new Uint8Array(await (await renderSvgToPng(svg, 240)).arrayBuffer()));
+      }
+      const glyph = (kind: SymbolKind, x: number, top: number, size: number) => {
+        const image = glyphs.get(kind);
+        if (image) pdf.addImage(image, "PNG", x, top, size, size);
+      };
+      const label = (s: string) => paragraph(s, 10, "bold", ink);
+      const reflection = (kind: SymbolKind, doubled = false) => {
         const r = REFLECTIONS[kind];
-        if (y > height - 82) nextPage();
-        heading(SYMBOL_LABELS[kind] + " | " + r.role, 16);
+        const top = y;
+        glyph(kind, margin, top - 5, 15);
+        if (doubled) glyph(kind, margin + 10, top - 5, 15);
+        const x = margin + (doubled ? 29 : 20);
+        heading(r.role, 19, x);
+        paragraph(SYMBOL_LABELS[kind] + " | " + r.tagline, 11, "italic", muted, x, width - margin - x);
+        y = Math.max(y, top + 14);
         paragraph(r.description);
-        paragraph("Possible strengths: " + r.strengths.join(" | "));
-        paragraph("Watch for: " + r.watchFor);
-        paragraph('"' + r.verse.text + '" - ' + r.verse.reference + " (CSB, excerpt)");
-        paragraph("Reflect: " + r.question);
-        y += 3;
+        label("POSSIBLE STRENGTHS");
+        paragraph(r.strengths.join("  |  "), 11, "bold", ink);
+        label("WATCH FOR");
+        paragraph(r.watchFor);
+        paragraph('"' + r.verse.text + '"', 12, "italic", ink);
+        paragraph(r.verse.reference + " (CSB, excerpt)", 10, "normal", muted);
+        label("REFLECT");
+        paragraph(r.question, 12, "bold");
+      };
+      pdf.setFillColor(ink);
+      pdf.rect(0, 0, width, 5, "F");
+      heading("Leadwithshape", 28);
+      paragraph("MY SYMBOL PICTURE  |  BIBLICAL LEADERSHIP REFLECTION", 10, "bold", muted);
+      const pictureSize = 70;
+      pdf.setDrawColor("#cbd8dc");
+      pdf.roundedRect((width - pictureSize) / 2 - 2, y - 2, pictureSize + 4, pictureSize + 4, 3, 3);
+      pdf.addImage(new Uint8Array(await picture.arrayBuffer()), "PNG", (width - pictureSize) / 2, y, pictureSize, pictureSize);
+      y += pictureSize + 10;
+      pdf.setFillColor("#e8f0f2");
+      pdf.roundedRect(margin, y - 5, contentWidth, 9, 2, 2, "F");
+      paragraph("YOU DOUBLED THE " + SYMBOL_LABELS[duplicateKind].toUpperCase(), 11, "bold", ink, margin + 3, contentWidth - 6);
+      y += 5;
+      reflection(duplicateKind, true);
+      nextPage();
+      heading("The rest of your picture", 23);
+      paragraph("Every good team needs different strengths.", 12, "italic", muted);
+      for (let i = 0; i < others.length; i++) {
+        if (i > 0) { nextPage(); heading("The rest of your picture", 20); }
+        reflection(others[i]);
+        if (i === 2) {
+          y += 8;
+          paragraph("Doubling a symbol is a playful hint at a strength you may lean on - but you used all four, and so does every good team.", 12, "italic", muted);
+        }
       }
       nextPage();
-      heading("Talk it over together", 22);
-      GROUP_PROMPTS.forEach((q, i) => { paragraph((i + 1) + ". " + q, 13); y += 7; });
-      paragraph('"For just as the body is one and has many parts... so also is Christ." - 1 Corinthians 12:12 (CSB, excerpt)');
+      heading("Talk it over together", 24);
+      GROUP_PROMPTS.forEach((q, i) => {
+        pdf.setFillColor(ink);
+        pdf.circle(margin + 4, y - 1.5, 4, "F");
+        pdf.setTextColor("#ffffff");
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(11);
+        pdf.text(String(i + 1), margin + 4, y, { align: "center" });
+        paragraph(q, 13, "normal", "#26343a", margin + 12, contentWidth - 12);
+        y += 8;
+      });
+      paragraph('"For just as the body is one and has many parts... so also is Christ."', 14, "italic", ink);
+      paragraph("1 Corinthians 12:12 (CSB, excerpt)", 10, "normal", muted);
       y += 8;
-      heading("About this activity", 15);
-      paragraph("A lighthearted conversation starter, not a validated psychological or personality assessment. Your shapes do not define you.");
-      paragraph("Visit pastorg.ca/shape for the activity and background sources.");
+      heading("About this activity", 16);
+      paragraph("A lighthearted conversation starter, not a validated psychological or personality assessment. Your shapes do not define you.", 11);
+      paragraph("Visit pastorg.ca/shape for the activity and background sources.", 11);
       for (let i = 1; i <= pdf.getNumberOfPages(); i++) {
         pdf.setPage(i);
+        pdf.setDrawColor("#cbd8dc");
+        pdf.line(margin, height - 16, width - margin, height - 16);
         pdf.setFont("helvetica", "normal");
         pdf.setFontSize(9);
-        pdf.setTextColor(100);
+        pdf.setTextColor(muted);
         pdf.text("Leadwithshape | pastorg.ca/shape", margin, height - 10);
         pdf.text(String(i) + " / " + pdf.getNumberOfPages(), width - margin, height - 10, { align: "right" });
       }
@@ -127,6 +170,7 @@ export function ResultsView({
 
   return (
     <div className="animate-rise space-y-6">
+      <div aria-hidden="true" className="absolute pointer-events-none opacity-0" style={{width: 1, height: 1, overflow: "hidden"}}>{SYMBOL_KINDS.map(kind => <span key={kind} ref={el => { el?.querySelector("svg")?.setAttribute("data-report-shape", kind); }}><SymbolGlyph kind={kind} /></span>)}</div>
       <Button type="button" variant="ghost" size="lg" className="-ml-2" onClick={onEdit}>
         <ArrowLeft /> Keep editing
       </Button>
