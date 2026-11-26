@@ -1,4 +1,4 @@
-# Leadwithshape
+# Lead With Shape
 
 An interactive Symbol Picture Builder for a lighthearted Biblical Leadership reflection activity.
 
