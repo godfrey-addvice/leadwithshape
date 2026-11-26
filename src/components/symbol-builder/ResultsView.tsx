@@ -105,7 +105,7 @@ export function ResultsView({
       pdf.rect(0, 0, width, 5, "F");
       heading("Leadwithshape", 28);
       paragraph("MY SYMBOL PICTURE  |  BIBLICAL LEADERSHIP REFLECTION", 10, "bold", muted);
-      const pictureSize = 70;
+      const pictureSize = 65;
       pdf.setDrawColor("#cbd8dc");
       pdf.roundedRect((width - pictureSize) / 2 - 2, y - 2, pictureSize + 4, pictureSize + 4, 3, 3);
       pdf.addImage(new Uint8Array(await picture.arrayBuffer()), "PNG", (width - pictureSize) / 2, y, pictureSize, pictureSize);
@@ -119,11 +119,32 @@ export function ResultsView({
       heading("The rest of your picture", 23);
       paragraph("Every good team needs different strengths.", 12, "italic", muted);
       for (let i = 0; i < others.length; i++) {
-        if (i > 0) { nextPage(); heading("The rest of your picture", 20); }
-        reflection(others[i]);
-        if (i === 2) {
+        const kind = others[i];
+        const r = REFLECTIONS[kind];
+        const top = y;
+        glyph(kind, margin, top - 4, 12);
+        heading(r.role, 15, margin + 16);
+        y -= 2;
+        paragraph(SYMBOL_LABELS[kind] + " | " + r.tagline, 10, "italic", muted, margin + 16, contentWidth - 16);
+        y = Math.max(y, top + 10);
+        const compact = (s: string, style = "normal", color = "#26343a") => {
+          pdf.setFont("helvetica", style);
+          pdf.setFontSize(11);
+          pdf.setTextColor(color);
+          const lines = pdf.splitTextToSize(clean(s), contentWidth) as string[];
+          for (const line of lines) { pdf.text(line, margin, y); y += 4.4; }
+          y += 1.2;
+        };
+        compact(r.description);
+        compact("Possible strengths: " + r.strengths.join(" | "), "bold", ink);
+        compact("Watch for: " + r.watchFor);
+        compact('"' + r.verse.text + '" - ' + r.verse.reference + " (CSB, excerpt)", "italic", ink);
+        compact("Reflect: " + r.question, "bold");
+        if (i < others.length - 1) {
+          y += 2;
+          pdf.setDrawColor("#cbd8dc");
+          pdf.line(margin, y, width - margin, y);
           y += 8;
-          paragraph("Doubling a symbol is a playful hint at a strength you may lean on - but you used all four, and so does every good team.", 12, "italic", muted);
         }
       }
       nextPage();
